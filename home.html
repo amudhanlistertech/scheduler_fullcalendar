@@ -65,16 +65,30 @@
     		float: right;
     		width: 900px;
     	}
-        header{
-            text-align: center;
-            height:10%;
-            position: relative;
-            left:5%;
-        }
+
+      #createdialog{
+        background-color:rgba(204,204,191,0.51);
+        border:15px solid #fff;
+        box-shadow:0 0 10px;
+        border-radius:2px;
+        font-size:13px;
+        text-align:center
+      }
+      header{
+        text-align: center;
+        height:10%;
+        position: relative;
+        left:5%;
+      }
       </style>
       <script>
         $(document).ready(function(){
             /* Initializing the external events*/
+        var filters = {};
+        filters['team']=1;
+        filters['role']=2;
+        filters['worker']=3;
+        filters['patient']=4;
 
     		$('#external-events .fc-event').each(function() {
 
@@ -93,7 +107,7 @@
 
     		});
             /* initialize the calendar*/
-            $('#calendar').fullCalendar({
+        $('#calendar').fullCalendar({
     			header: {
     				left: 'prev,next today',
     				center: 'title',
@@ -101,18 +115,20 @@
     			},
     			defaultDate: '2016-09-12',
     			navLinks: true, // can click day/week names to navigate views
-                selectable: true,
+          selectable: true,
     			selectHelper: true,
-                select: function(start, end) {
-    				var title = prompt('Event Title:');
-                    var start = prompt('Start:');
-                    var end = prompt('End:');
+          select: function(start, end) {
+    			  var title = prompt('Event Title:');
+            var start = prompt('Start:(YYYY-MM-DD)');
+            var end = prompt('End:(YYYY-MM-DD)');
+            var filterkey = prompt('team | role | worker | patient: ');
     				var eventData;
     				if (title) {
     					eventData = {
     						title: title,
     						start: start,
-    						end: end
+    						end: end,
+                filter: filters[filterkey]
     					};
     					$('#calendar').fullCalendar('renderEvent', eventData, true);
     				}
@@ -122,7 +138,6 @@
     			eventLimit: true,
                 droppable: true, // this allows things to be dropped onto the calendar
     			drop: function() {
-    				// is the "remove after drop" checkbox checked?
     				if ($('#drop-remove').is(':checked')) {
     					// if so, remove the element from the "Draggable Events" list
     					$(this).remove();
@@ -171,42 +186,43 @@
                         content: event.description
                     });
                     return ['all', event.filter].indexOf($('#filter-type').val()) >= 0;
-                },
-                eventClick: function(calEvent, jsEvent, view) {//This is test event.
-                    alert('Event: ' + calEvent.title +'Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
                 }
-    		});
-            $('#filter-type').on('change',function(){
-                $('#calendar').fullCalendar('rerenderEvents');
-            })
-        });
+                // eventClick: function(event, jsEvent, view) {//This is test event.
+                //   //This is triggered if an event is clicked.
+                // }
+    		});//calendar ends
+        // When filter is applied, it filters the events based on the type.
+        $('#filter-type').on('change',function(){
+          $('#calendar').fullCalendar('rerenderEvents');
+        })
+      });
       </script>
   </head>
   <body>
     <header><h1>Full calendar demo</h1></header>
     <section id="wrap">
-        <aside id='external-events'>
-			<h4>Draggable Events</h4>
-			<div class='fc-event'>Event 1</div>
-			<div class='fc-event'>Event 2</div>
-			<div class='fc-event'>Event 3</div>
-			<div class='fc-event'>Event 4</div>
-			<div class='fc-event'>Event 5</div>
-			<p>
-				<input type='checkbox' id='drop-remove' />
-				<label for='drop-remove'>remove after drop</label>
-			</p>
-		</aside>
-        <aside>
-          <select id="filter-type">
-            <option value="all">All</option>
-            <option value="1">Team</option>
-            <option value="2">Role</option>
-            <option value="3">Worker</option>
-            <option value="4">Patient</option>
-          </select>
-        </aside>
-       <section id="calendar"></article>
+      <aside id='external-events'>
+			  <h4>Draggable Events</h4>
+			  <div class='fc-event'>Event 1</div>
+			  <div class='fc-event'>Event 2</div>
+			  <div class='fc-event'>Event 3</div>
+			  <div class='fc-event'>Event 4</div>
+			  <div class='fc-event'>Event 5</div>
+			  <p>
+				  <input type='checkbox' id='drop-remove' />
+				  <label for='drop-remove'>remove after drop</label>
+			  </p>
+		  </aside>
+      <aside>
+        <select id="filter-type">
+          <option value="all">All</option>
+          <option value="1">Team</option>
+          <option value="2">Role</option>
+          <option value="3">Worker</option>
+          <option value="4">Patient</option>
+        </select>
+      </aside>
+      <section id="calendar"></section>
     </section>
   </body>
 </html>

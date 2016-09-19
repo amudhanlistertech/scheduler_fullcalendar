@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullCalendar with Bootstrap Modal</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.css" type="text/css" rel="stylesheet" />
+    <link src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css"></link>
+    <link href='http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css' rel='stylesheet' />
+</head>
+<body>
+    <div class="container">
+      <br/><br/>
+        <div class="row">
+          <p class="filterp">Visit type filter</p>
+        </div>
+        <div class="row">
+          <div class="styled-select blue semi-square">
+            <select id="filter-type">
+              <option value="all">All</option>
+              <option value="1">Team</option>
+              <option value="2">Role</option>
+              <option value="3">Worker</option>
+              <option value="4">Patient</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div id='external-events' class="col-sm-4">
+            <h4>Draggable Events</h4>
+            <div class='fc-event'>Event 1</div>
+            <div class='fc-event'>Event 2</div>
+            <div class='fc-event'>Event 3</div>
+            <div class='fc-event'>Event 4</div>
+            <div class='fc-event'>Event 5</div>
+            <p>
+              <input type='checkbox' id='drop-remove' />
+              <label for='drop-remove'>remove after drop</label>
+            </p>
+          </div>
+            <div class="col-sm-8">
+                <br/>
+                <div id="bootstrapModalFullCalendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullCalModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                    <h4 id="modalTitle" class="modal-title"></h4>
+                </div>
+                <div id="modalBody" class="modal-body">
+                  <p class="desc"></p>
+                  <p class="status"></p>
+                  <p class="location"></p>
+                  <p class="patient"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a class="btn btn-primary" id="eventUrl" target="_blank">Event Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="createEventModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                    <h4 id="modalTitle" class="modal-title">Event creation</h4>
+                </div>
+                <div id="modalBody" class="modal-body">
+                  <form id="createAppointmentForm" class="form-horizontal">
+                    <div class="control-group">
+                      <label class="control-label" for="start">Start:</label>
+                      <input type="text" name="start" id="start" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="end">End:</label>
+                      <input type="text" name="end" id="end" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="desc">Description:</label>
+                      <input type="text" name="description" id="desc" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="status">Status:</label>
+                      <input type="text" name="status" id="status" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="location">Location:</label>
+                      <input type="text" name="location" id="location" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="patient">Patient:</label>
+                      <input type="text" name="patient" id="patient" tyle="margin: 0 auto;">
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit"class="btn btn-primary" id="submitButton">Create</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    #bootstrapModalFullCalendar {
+      width: 900px;
+    }
+
+    .control-label{
+      display: inline-block;
+      width:150px;
+    }
+    .filterp{
+      text-align: center;
+      font-weight: bold;
+    }
+    #external-events {
+      width: 150px;
+      padding: 0 10px;
+      border: 1px solid #ccc;
+      background: #eee;
+      text-align: left;
+    }
+    #external-events h4 {
+      font-size: 16px;
+      margin-top: 0;
+      padding-top: 1em;
+    }
+    #external-events .fc-event {
+      margin: 10px 0;
+      cursor: pointer;
+    }
+    #external-events p {
+      margin: 1.5em 0;
+      font-size: 11px;
+      color: #666;
+    }
+    #external-events p input {
+      margin: 0;
+      vertical-align: middle;
+    }
+    .styled-select {
+      margin: 0 auto;
+      background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+      height: 29px;
+      overflow: hidden;
+      width: 120px;
+    }
+    .semi-square {
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+    .blue    { background-color: #3b8ec2; }
+    .styled-select select {
+        background: transparent;
+        border: none;
+        font-size: 14px;
+        height: 29px;
+        padding: 5px;
+        width: 120px;
+    }
+    </style>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src='http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js'></script>
+    <script>
+        $(document).ready(function() {
+          /* Initializing the external events*/
+          var filters = {};
+          filters['team']=1;
+          filters['role']=2;
+          filters['worker']=3;
+          filters['patient']=4;
+          $('#external-events .fc-event').each(function() {
+
+            // store data so the calendar knows to render an event upon drop
+            $(this).data('event', {
+              title: $.trim($(this).text()), // use the element's text as the event title
+              stick: true // maintain when user navigates
+            });
+
+            // make the event draggable using jQuery UI
+            $(this).draggable({
+              zIndex: 999,
+              revert: true,      // will cause the event to go back to its
+              revertDuration: 0  //  original position after the drag
+            });
+
+          });
+            $('#bootstrapModalFullCalendar').fullCalendar({
+                header: {
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'month,agendaWeek,agendaDay,listMonth'
+                },
+                navLinks: true, // can click day/week names to navigate views
+                selectable: true,
+          			selectHelper: true,
+          			eventLimit: true,
+                droppable: true, // this allows things to be dropped onto the calendar
+          			drop: function() {
+          		    if ($('#drop-remove').is(':checked')) {
+          					// if so, remove the element from the "Draggable Events" list
+          					$(this).remove();
+          				}
+          			},
+                eventClick:  function(event, jsEvent, view) {
+                    $('#modalTitle').html(event.title);
+                    $('#modalBody p.desc').html("Description:"+event.description);
+                    $('#modalBody p.status').html("Event status:"+event.status);
+                    $('#modalBody p.location').html("Event location:"+event.location);
+                    $('#modalBody p.patient').html("Patient details:"+event.patient);
+                    $('#eventUrl').attr('href',event.url);
+                    $('#fullCalModal').modal();
+                    return false;
+                },
+                events:
+                [
+                  {
+                      title: 'Event 1',
+                      start: '2016-09-10',
+                      description:'Team visit',
+                      status: 'open',
+                      location: 'home',
+                      patient: 'PatientA',
+                      filter: '1'
+                  },
+                  {
+                      title: 'Event 2',
+                      start: '2016-09-15',
+                      description:'Team visit',
+                      status: 'open',
+                      location: 'home',
+                      patient: 'PatientB',
+                      filter: '1'
+                  },
+                  {
+                      title: 'Event 3',
+                      start: '2016-09-21',
+                      description:'Role visit',
+                      status: 'closed',
+                      location: 'home',
+                      patient: 'PatientC',
+                      filter: '2'
+                  },
+                  {
+                      title: 'Event 4',
+                      start: '2016-09-28',
+                      description:'Worker visit',
+                      status: 'canceled',
+                      location: 'home',
+                      patient: 'PatientD',
+                      filter: '3'
+                  },
+                  {
+                      title: 'Event 5',
+                      start: '2016-09-18',
+                      description:'Patient visit',
+                      status: 'canceled',
+                      location: 'home',
+                      patient: 'PatientE',
+                      filter: '4'
+                  },
+                  {
+                      title: 'Event 6',
+                      start: '2016-09-28',
+                      description:'Role visit',
+                      status: 'closed',
+                      location: 'home',
+                      patient: 'PatientF',
+                      filter: '2'
+                  }
+                ],
+                eventRender: function eventRender( event, element, view ) {
+                    element.qtip({
+                        content: event.description
+                    });
+                    return ['all', event.filter].indexOf($('#filter-type').val()) >= 0;
+                },
+                select: function(start, end) {
+          			  // var title = prompt('Event Title:');
+                  // var start = prompt('Start:(YYYY-MM-DD)');
+                  // var end = prompt('End:(YYYY-MM-DD)');
+                  // var description = prompt('Description');
+                  // var filterkey = prompt('team | role | worker | patient: ');
+          				// var eventData;
+          				// if (title) {
+          				// 	eventData = {
+          				// 		title: title,
+          				// 		start: start,
+          				// 		end: end,
+                  //     filter: filters[filterkey],
+                  //     description : description
+          				// 	};
+          				// 	$('#bootstrapModalFullCalendar').fullCalendar('renderEvent', eventData, true);
+          				// }
+          				// $('#bootstrapModalFullCalendar').fullCalendar('unselect');
+                  $('#createEventModal').modal('show');
+          			}
+            });
+            $('#submitButton').on('click', function(e){
+              e.preventDefault();
+              doSubmit();
+            });
+            function doSubmit(){
+              $("#createEventModal").modal('hide');
+              console.log($('#apptStartTime').val());
+              console.log($('#apptEndTime').val());
+              console.log($('#apptAllDay').val());
+              $("#bootstrapModalFullCalendar").fullCalendar('renderEvent',
+              {
+                title: $('#patientName').val(),
+                start: new Date($('#apptStartTime').val()),
+                end: new Date($('#apptEndTime').val()),
+                allDay: ($('#apptAllDay').val() == "true"),
+              },true);
+            }
+            $('#filter-type').on('change',function(){
+              $('#bootstrapModalFullCalendar').fullCalendar('rerenderEvents');
+            })
+        });
+    </script>
+</body>
+</html>
