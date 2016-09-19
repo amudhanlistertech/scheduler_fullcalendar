@@ -20,10 +20,10 @@
           <div class="styled-select blue semi-square">
             <select id="filter-type">
               <option value="all">All</option>
-              <option value="1">Team</option>
-              <option value="2">Role</option>
-              <option value="3">Worker</option>
-              <option value="4">Patient</option>
+              <option value="team">Team</option>
+              <option value="role">Role</option>
+              <option value="worker">Worker</option>
+              <option value="patient">Patient</option>
             </select>
           </div>
         </div>
@@ -55,10 +55,10 @@
                     <h4 id="modalTitle" class="modal-title"></h4>
                 </div>
                 <div id="modalBody" class="modal-body">
-                  <p class="desc"></p>
-                  <p class="status"></p>
-                  <p class="location"></p>
-                  <p class="patient"></p>
+                  <p class="desc_p"></p>
+                  <p class="status_p"></p>
+                  <p class="location_p"></p>
+                  <p class="patient_p"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -77,6 +77,10 @@
                 <div id="modalBody" class="modal-body">
                   <form id="createAppointmentForm" class="form-horizontal">
                     <div class="control-group">
+                      <label class="control-label" for="title">Title:</label>
+                      <input type="text" name="title" id="title" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
                       <label class="control-label" for="start">Start:</label>
                       <input type="text" name="start" id="start" tyle="margin: 0 auto;">
                     </div>
@@ -86,7 +90,7 @@
                     </div>
                     <div class="control-group">
                       <label class="control-label" for="desc">Description:</label>
-                      <input type="text" name="description" id="desc" tyle="margin: 0 auto;">
+                      <input type="text" name="desc" id="desc" tyle="margin: 0 auto;">
                     </div>
                     <div class="control-group">
                       <label class="control-label" for="status">Status:</label>
@@ -99,6 +103,10 @@
                     <div class="control-group">
                       <label class="control-label" for="patient">Patient:</label>
                       <input type="text" name="patient" id="patient" tyle="margin: 0 auto;">
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="filter">Filtertype:</label>
+                      <input type="text" name="filter" id="filter" tyle="margin: 0 auto;" placeholder="team|role|worker| patient">
                     </div>
                 </form>
                 </div>
@@ -186,6 +194,7 @@
     <script src='http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js'></script>
     <script>
         $(document).ready(function() {
+          var filterArray = ['all', 'team', 'role', 'worker','patient'];
           /* Initializing the external events*/
           $('#start').datepicker({
             inline: true,
@@ -197,11 +206,6 @@
             showOtherMonths: true,
             dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
           });
-          var filters = {};
-          filters['team']=1;
-          filters['role']=2;
-          filters['worker']=3;
-          filters['patient']=4;
           $('#external-events .fc-event').each(function() {
 
             // store data so the calendar knows to render an event upon drop
@@ -237,11 +241,10 @@
           			},
                 eventClick:  function(event, jsEvent, view) {
                     $('#modalTitle').html(event.title);
-                    $('#modalBody p.desc').html("Description:"+event.description);
-                    $('#modalBody p.status').html("Event status:"+event.status);
-                    $('#modalBody p.location').html("Event location:"+event.location);
-                    $('#modalBody p.patient').html("Patient details:"+event.patient);
-                    $('#eventUrl').attr('href',event.url);
+                    $('#modalBody p.desc_p').html("Description:"+event.desc);
+                    $('#modalBody p.status_p').html("Event status:"+event.status);
+                    $('#modalBody p.location_p').html("Event location:"+event.location);
+                    $('#modalBody p.patient_p').html("Patient details:"+event.patient);
                     $('#fullCalModal').modal();
                     return false;
                 },
@@ -254,7 +257,7 @@
                       status: 'open',
                       location: 'home',
                       patient: 'PatientA',
-                      filter: '1'
+                      filter: 'team'
                   },
                   {
                       title: 'Event 2',
@@ -263,7 +266,7 @@
                       status: 'open',
                       location: 'home',
                       patient: 'PatientB',
-                      filter: '1'
+                      filter: 'team'
                   },
                   {
                       title: 'Event 3',
@@ -272,7 +275,7 @@
                       status: 'closed',
                       location: 'home',
                       patient: 'PatientC',
-                      filter: '2'
+                      filter: 'role'
                   },
                   {
                       title: 'Event 4',
@@ -281,7 +284,7 @@
                       status: 'canceled',
                       location: 'home',
                       patient: 'PatientD',
-                      filter: '3'
+                      filter: 'worker'
                   },
                   {
                       title: 'Event 5',
@@ -290,7 +293,7 @@
                       status: 'canceled',
                       location: 'home',
                       patient: 'PatientE',
-                      filter: '4'
+                      filter: 'patient'
                   },
                   {
                       title: 'Event 6',
@@ -299,33 +302,17 @@
                       status: 'closed',
                       location: 'home',
                       patient: 'PatientF',
-                      filter: '2'
+                      filter: 'role'
                   }
                 ],
                 eventRender: function eventRender( event, element, view ) {
                     element.qtip({
                         content: event.description
                     });
-                    return ['all', event.filter].indexOf($('#filter-type').val()) >= 0;
+                    var fvalue = $('#filter-type').val();
+                    return ['all', event.filter].indexOf(fvalue) >= 0;
                 },
                 select: function(start, end) {
-          			  // var title = prompt('Event Title:');
-                  // var start = prompt('Start:(YYYY-MM-DD)');
-                  // var end = prompt('End:(YYYY-MM-DD)');
-                  // var description = prompt('Description');
-                  // var filterkey = prompt('team | role | worker | patient: ');
-          				// var eventData;
-          				// if (title) {
-          				// 	eventData = {
-          				// 		title: title,
-          				// 		start: start,
-          				// 		end: end,
-                  //     filter: filters[filterkey],
-                  //     description : description
-          				// 	};
-          				// 	$('#bootstrapModalFullCalendar').fullCalendar('renderEvent', eventData, true);
-          				// }
-          				// $('#bootstrapModalFullCalendar').fullCalendar('unselect');
                   $('#createEventModal').modal('show');
           			}
             });
@@ -335,16 +322,26 @@
             });
             function doSubmit(){
               $("#createEventModal").modal('hide');
-              console.log($('#apptStartTime').val());
-              console.log($('#apptEndTime').val());
-              console.log($('#apptAllDay').val());
               $("#bootstrapModalFullCalendar").fullCalendar('renderEvent',
               {
-                title: $('#patientName').val(),
-                start: new Date($('#apptStartTime').val()),
-                end: new Date($('#apptEndTime').val()),
-                allDay: ($('#apptAllDay').val() == "true"),
+                start: new Date($('#start').val()),
+                end: new Date($('#end').val()),
+                desc:$('#desc').val(),
+                status:$('#status').val(),
+                location:$('#location').val(),
+                patient:$('#patient').val(),
+                title:$('#title').val(),
+                filter:$('#filter').val()
               },true);
+              /* Emptying the modal*/
+              $('#title').val('');
+              $('#start').val('');
+              $('#end').val('');
+              $('#desc').val('');
+              $('#status').val('');
+              $('#location').val('');
+              $('#patient').val('');
+              $('#filter').val('');
             }
             $('#filter-type').on('change',function(){
               $('#bootstrapModalFullCalendar').fullCalendar('rerenderEvents');
@@ -392,7 +389,6 @@
       height: 30px;
       text-align: center;
       cursor: pointer;
-      background-image: url('../img/arrow.png');
       background-repeat: no-repeat;
       line-height: 600%;
       overflow: hidden;
