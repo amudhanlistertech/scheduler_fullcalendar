@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler</title>
+    <!-- Date picker style -->
+    <link href='style/librarystyle.css' rel="stylesheet" />
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- jquery ui -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+    <link src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css"></link>
+    <!-- moment - a date/time library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+    <!-- fullcalendar library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.css" type="text/css" rel="stylesheet" />
+    <!-- bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <!-- qtip library - For tooltip text -->
+    <script src='http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js'></script>
+    <link href='http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css' rel='stylesheet' />
+    <!-- Custom script -->
+    <script src='script/fcscript.js'></script>
+</head>
+
+<body>
+    <div class="container">
+        <br/><br/>
+        <div class="row">
+            <p class="filterp">Visit type filter</p>
+        </div>
+        <div class="row">
+            <div class="styled-select blue semi-square">
+                <select id="filter-type">
+              <option value="all">All</option>
+              <option value="team">Team</option>
+              <option value="role">Role</option>
+              <option value="worker">Worker</option>
+              <option value="patient">Patient</option>
+            </select>
+            </div>
+        </div>
+        <div class="row">
+            <div id='external-events' class="col-sm-4">
+                <h4>Draggable Events</h4>
+                <div class='fc-event'>Test event</div>
+                <p>
+                    <input type='checkbox' id='drop-remove' />
+                    <label for='drop-remove'>remove after drop</label>
+                </p>
+            </div>
+            <div class="col-sm-8">
+                <br/>
+                <div id="bootstrapModalFullCalendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullCalModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                    <h4 id="modalTitle" class="modal-title"></h4>
+                </div>
+                <div id="modalBody" class="modal-body">
+                    <p class="worker_p"></p>
+                    <p class="role_p"></p>
+                    <p class="team_p"></p>
+                    <p class="location_p"></p>
+                    <p class="status_p"></p>
+                    <p class="outcome_p"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a class="btn btn-primary" id="eventUrl" target="_blank">Event Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="createEventModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                    <h4 id="modalTitle" class="modal-title">Event creation</h4>
+                </div>
+                <div id="modalBody" class="modal-body">
+                    <form id="createAppointmentForm" class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" for="worker">Worker:</label>
+                            <input type="text" name="worker" id="worker" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="role">Role:</label>
+                            <input type="text" name="role" id="role" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="team">Team:</label>
+                            <input type="text" name="team" id="team" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="location">Location:</label>
+                            <input type="text" name="location" id="location" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="status">Status:</label>
+                            <input type="text" name="status" id="status" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="outcome">Outcome:</label>
+                            <input type="text" name="outcome" id="outcome" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="start">Start:</label>
+                            <input type="text" name="start" id="start" tyle="margin: 0 auto;">
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="end">End:</label>
+                            <input type="text" name="end" id="end" tyle="margin: 0 auto;">
+                        </div>
+                        <!-- <div class="control-group">
+                            <label class="control-label" for="filter">Filtertype:</label>
+                            <input type="text" name="filter" id="filter" tyle="margin: 0 auto;" placeholder="team|role|worker| patient">
+                        </div> -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="submitButton">Create</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
