@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	var filterArray = ['all', 'team', 'role', 'worker', 'patient'];
-	/* Initializing the external events*/
+
+	//jQuery date picker for start and end.
 	$('#start').datepicker({      
 		inline: true,
 		      showOtherMonths: true,
@@ -13,6 +14,7 @@ $(document).ready(function() {
 		      dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 		    
 	});
+	/* Initializing the draggable events*/
 	$('#external-events .fc-event').each(function() {
 
 		// store data so the calendar knows to render an event upon drop
@@ -71,6 +73,7 @@ $(document).ready(function() {
 			title: 'Not completed',
 			filter: 'team'
 		}],
+		//This is triggered when an event is rendered.
 		eventRender: function eventRender(event, element, view) {
 			// Shows the event status as a tool tip
 			element.qtip({
@@ -110,7 +113,8 @@ $(document).ready(function() {
 			$('#start').val(''),
 			$('#end').val('')
 		doAjax("/api/events", "POST", data, function(response) {
-			$("#bootstrapModalFullCalendar").fullCalendar('eventRender', {
+			//renderEvent renders a new event in the calendar
+			$("#bootstrapModalFullCalendar").fullCalendar('renderEvent', {
 				id: response.id,
 				worker: response.worker,
 				role: response.role,
@@ -121,16 +125,19 @@ $(document).ready(function() {
 				start: new Date(response.start),
 				end: new Date(response.end),
 				title: response.outcome
+				/*The 'true' here is for the'stick' variable.
+				When the user navigates to another month, the events rendered
+				for the current month stay if the stick is true.*/
 			}, true);
-		}, function() {
-			console.log("The request failed");
+		}, function(response) {
+			console.log("Request failed : "+response);
 		});
 	}
   getAllEvents();
   function getAllEvents(){
     doAjax("/api/events", "GET", "", function(response) {
+			//From the response, each event is rendered.
       jQuery.each(response, function(index, val){
-				//console.log(val)
 				$("#bootstrapModalFullCalendar").fullCalendar('renderEvent', {
 					id: val.id,
 					worker: val.worker,
